@@ -61,11 +61,13 @@ int SCCB_Init(int pin_sda, int pin_scl)
 uint8_t SCCB_Probe()
 {
 #ifdef CONFIG_SCCB_HARDWARE_I2C
+	uint8_t reg = 0x00;
     uint8_t slave_addr = 0x0;
     while(slave_addr < 0x7f) {
         i2c_cmd_handle_t cmd = i2c_cmd_link_create();
         i2c_master_start(cmd);
         i2c_master_write_byte(cmd, ( slave_addr << 1 ) | WRITE_BIT, ACK_CHECK_EN);
+		i2c_master_write_byte(cmd, reg, ACK_CHECK_EN);
         i2c_master_stop(cmd);
         esp_err_t ret = i2c_master_cmd_begin(SCCB_I2C_PORT, cmd, 1000 / portTICK_RATE_MS);
         i2c_cmd_link_delete(cmd);
